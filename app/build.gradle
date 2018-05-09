@@ -28,4 +28,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.loopj.android:android-async-http:1.4.9'
     implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
+    implementation 'org.apache.commons:commons-lang3:3.6'
+    implementation 'org.bouncycastle:bcprov-jdk16:1.46'
+    implementation 'org.bitbucket.b_c:jose4j:0.6.3'
 }

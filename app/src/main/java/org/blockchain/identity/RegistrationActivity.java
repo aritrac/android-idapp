@@ -12,14 +12,28 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import org.blockchain.identity.feature.MobileKeys;
+import org.blockchain.identity.utils.HttpUtils;
+import org.blockchain.identity.utils.JwtUtils;
+import org.blockchain.identity.utils.KeyUtils;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.jwt.consumer.JwtContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+
+import cz.msebera.android.httpclient.Header;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -67,24 +81,38 @@ public class RegistrationActivity extends AppCompatActivity {
 
         @Override
         protected JSONObject doInBackground(String... strings) {
-            String email = strings[0];
+            try {
+                String email = strings[0];
+                JSONObject jsonObjectRequest = new JSONObject();
+                jsonObjectRequest.put("email", email);
+                jsonObjectRequest.put("publicKey", MobileKeys.getMobilePublicKey());
+                String jsonResponse = HttpUtils.post(Constants.SERVER_URL, jsonObjectRequest.toString());
+                JSONObject jsonObjectResponse = new JSONObject(jsonResponse);
+                jsonObjectResponse.put(Constants.REGISTERED_EMAIL_KEY, email);
+                return jsonObjectResponse;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
-        protected void onPostExecute(JSONObject status) {
+        protected void onPostExecute(JSONObject jsonResponse) {
             if ((progressDialog != null) && progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
-            if(status == null) {
+            if(jsonResponse == null) {
                 showErrorAlertDialog();
                 return;
             } else {
                 try {
                     final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putString(Constants.REGISTERED_EMAIL_KEY, status.getString("email"));
+                    editor.putString(Constants.REGISTERED_EMAIL_KEY, jsonResponse.getString(Constants.REGISTERED_EMAIL_KEY));
+                    editor.putString(Constants.SERVER_PUBLIC_KEY, jsonResponse.getString("serverPublicKey"));
+                    editor.putString(Constants.REGISTERED_ID_KEY, jsonResponse.getString("id"));
                     editor.commit();
+                    activity.finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                     showErrorAlertDialog();
