@@ -2,4 +2,5 @@
     <string name="app_name">Blockchain Identity</string>
     <string name="title_activity_pin">PinActivity</string>
     <string name="title_activity_registration">Register</string>
+    <string name="title_activity_authorize">Authorize</string>
 </resources>

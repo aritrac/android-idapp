@@ -29,8 +29,11 @@
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".RegistrationActivity"
+        <activity
+            android:name=".RegistrationActivity"
             android:label="@string/title_activity_registration" />
+        <activity android:name=".AuthorizeActivity"
+            android:label="@string/title_activity_registration"></activity>
     </application>
 
 </manifest>

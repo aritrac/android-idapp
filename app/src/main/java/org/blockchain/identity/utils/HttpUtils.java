@@ -13,7 +13,7 @@ import javax.net.ssl.SSLSession;
 
 public class HttpUtils {
 
-    public static String post(String url, String data) {
+    public static String post(String url, String data, String contentType) {
         OutputStream os = null;
         HttpURLConnection connection = null;
         InputStream in = null;
@@ -27,7 +27,7 @@ public class HttpUtils {
                 }
             });*/
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Content-Type", contentType);
             connection.setDoOutput(true);
 
             if (data != null && !data.trim().equals("")) {

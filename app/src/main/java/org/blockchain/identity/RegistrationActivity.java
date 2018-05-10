@@ -3,6 +3,7 @@ package org.blockchain.identity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -86,7 +87,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 JSONObject jsonObjectRequest = new JSONObject();
                 jsonObjectRequest.put("email", email);
                 jsonObjectRequest.put("publicKey", MobileKeys.getMobilePublicKey());
-                String jsonResponse = HttpUtils.post(Constants.SERVER_URL, jsonObjectRequest.toString());
+                String jsonResponse = HttpUtils.post(Constants.SERVER_REGISTER_URL, jsonObjectRequest.toString(), "application/json");
                 JSONObject jsonObjectResponse = new JSONObject(jsonResponse);
                 jsonObjectResponse.put(Constants.REGISTERED_EMAIL_KEY, email);
                 return jsonObjectResponse;
@@ -112,6 +113,8 @@ public class RegistrationActivity extends AppCompatActivity {
                     editor.putString(Constants.SERVER_PUBLIC_KEY, jsonResponse.getString("serverPublicKey"));
                     editor.putString(Constants.REGISTERED_ID_KEY, jsonResponse.getString("id"));
                     editor.commit();
+                    Intent intent = new Intent(activity, MainActivity.class);
+                    activity.startActivity(intent);
                     activity.finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
